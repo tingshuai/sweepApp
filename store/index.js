@@ -41,6 +41,11 @@ const store = new Vuex.Store({
 				},
 				success: (res) => {
 					obj.scb(res)
+					if(res.data.code == 401){//token失效....
+						uni.navigateTo({
+							url: '../login/login'
+						})
+					}
 				},
 				fail(res){
 					obj.fcb(res)

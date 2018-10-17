@@ -60,6 +60,11 @@
 									key:"token",
 									data:res.data.token,
 									success() {
+										console.log("return back")
+										uni.showToast({
+												title: "return back",
+												duration: 2000
+										});
 										uni.navigateBack();
 									}
 								})

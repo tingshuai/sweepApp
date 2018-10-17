@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "echarts": "^4.2.0-rc.2",
-    "echarts-gl": "^1.1.1"
+    "echarts-gl": "^1.1.1",
+    "highcharts": "^6.1.4",
+    "jquery": "^3.3.1"
   }
 }

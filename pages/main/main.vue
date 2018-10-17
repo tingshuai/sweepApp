@@ -1,36 +1,32 @@
 <template>
     <view class="content">
-		<map class="map" :latitude="mapMsg.latitude" :longitude="mapMsg.longitude" :markers="location"></map>
-        <view class="header">
-        	<view class="h_left">
-        		sdf
-        	</view>
-			<view class="h_center">
-				{{ userMsg.userName }}
+			<map :style="{height: mapHeight}" class="map" :controls="controls" @controltap="tapControl" :latitude="mapMsg.latitude" :longitude="mapMsg.longitude" :markers="location">
+		
+			</map>
+			<view class="header">
+				<view class="h_left">
+					sdf
+				</view>
+				<view class="h_center">
+					{{ userMsg.userName }}
+				</view>
+				<view class="h_right">
+					<text>退出</text>
+				</view>
 			</view>
-			<view class="h_right">
-				<text>退出</text>
+			<view class="charts">
+				<view id="c_left">
+					
+				</view>
+				<view id="c_right" ref="c_right">
+					
+				</view>
 			</view>
-        </view>
-		<view class="charts">
-			<view id="c_left">
-				
-			</view>
-			<view id="c_right">
-				
-			</view>
-		</view>
     </view>
 </template>
 
 <script>
-	// 引入 ECharts 主模块
-	var echarts = require('echarts/lib/echarts');
-	// 引入柱状图
-	require('echarts/lib/chart/bar');
-	// 引入提示框和标题组件
-	require('echarts/lib/component/tooltip');
-	require('echarts/lib/component/title');
+
     import {
         mapState,
 		mapMutations
@@ -44,11 +40,22 @@
 					latitude:39.909,
 					longitude:116.39742
 				},
-				location: [{
-					"latitude": 39,
-					"longitude": 116
-				}],
-				barGraph:{}
+				mapHeight:"100%",
+				location: [],
+				barGraph:{},
+				controls:[
+					{
+						id:"c_left",
+						position:{
+							top:40,
+							left:20,
+							width:50,
+							height:88
+						},
+						iconPath:"../../static/img/home.png",
+						clickable:true
+					}
+				]
             }
         },		
         computed: mapState(['userMsg','token']),
@@ -80,6 +87,11 @@
 		},
 		methods:{
 			...mapMutations(['login','httpRequest']),
+			tapControl(e){
+				console.log(e)
+				this.mapHeight = "40%";
+				console.log(this.mapHeight)
+			},
 			getPosition(){//获取清扫机位置
 				let that = this;
 				that.httpRequest({
@@ -116,7 +128,21 @@
 					scb(res){
 						console.log(res)
 						if( res.data.code == 200 ){
-							
+							let _data = [{
+								value:res.data.data.errors,
+								name:"低电压占比",
+							},{
+								value:res.data.data.total - res.data.data.errors,
+								name:"正常电压占比",
+							}]
+							that.initChart({
+								series : [{
+									type: 'pie',
+									radius : '55%',
+									center: ['50%', '60%'],
+									data:_data
+								}]
+							})
 						}
 					},
 					fcb(res){
@@ -125,21 +151,23 @@
 				})				
 			},
 			initChart(obj){
-				var myChart = echarts.init(document.getElementById('c_left'));
+				console.log(this.$refs.c_right)
 			}
 		}
     }
 </script>
 
-<style>
+<style lang="less">
 .header{
 	display: flex;
 	justify-content: space-between;
-	margin-top: 25upx;
+	top: 25upx;
 	height: 88upx;
 	background-color: white;
 	align-items: center;
-	z-index: 100;
+	z-index: 1000;
+	position: fixed;
+	width: 100%;
 }
 .map{
 	position: absolute;
@@ -151,5 +179,21 @@
 	height: 300upx;
 	background-color: white;
 	width: 100%;
+	position: fixed;
+	bottom: 0;
+	display: block;
+	z-index: 1000;
+	#c_left{
+		width: 50%;
+		background-color: white;
+		height: 100%;
+		display: inline-block;
+	}
+	#c_right{
+		width: 50%;
+		background-color: white;
+		height: 100%;
+		display: inline-block;
+	}
 }
 </style>
