@@ -37,9 +37,7 @@
                 positionTop: 0
             }
         },
-        computed: mapState({mapState}),
         methods: {
-            ...mapMutations(['login','httpRequest']),
             bindLogin() {
 				let that = this;
                 let promise = new Promise((resolve,reject)=>{
@@ -82,7 +80,7 @@
 				})
             }
 		},
-        onLoad() {
+        mounted() {
             
         }
     }
